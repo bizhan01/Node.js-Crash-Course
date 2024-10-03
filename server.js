@@ -3,7 +3,10 @@ import http from "http";
 const PORT = 8000;
 
 const server = http.createServer((req, res) => {
-  res.end("Hello World");
+  res.setHeader("Content-type", "text/html");
+  res.statusCode = 404;
+
+  res.end("<h1>Hello World</h1>");
 });
 
 server.listen(PORT, () => {
