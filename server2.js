@@ -39,6 +39,12 @@ const getUserByIdHandler = (req, res) => {
   res.end();
 };
 
+// Not Found Handler
+const notFoundHandler = (req, res) => {
+  res.statusCode = 404;
+  res.write(JSON.stringify({ message: "User Not Found" }));
+  res.end();
+};
 const server = createServer((req, res) => {
   logger(req, res, () => {
     if (req.url === "/api/users" && req.method === "GET") {
