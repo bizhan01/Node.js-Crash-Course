@@ -47,30 +47,18 @@ const notFoundHandler = (req, res) => {
 };
 const server = createServer((req, res) => {
   logger(req, res, () => {
-    if (req.url === "/api/users" && req.method === "GET") {
-      res.setHeader("Content-Type", "application/json");
-      res.write(JSON.stringify(users));
-      res.end();
-    } else if (
-      req.url.match(/\/api\/users\/([0-9]+)/) &&
-      req.method === "GET"
-    ) {
-      const id = req.url.split("/")[3];
-      const user = users.find((user) => user.id === parseInt(id));
-      res.setHeader("Content-Type", "application/json");
-      if (user) {
-        res.write(JSON.stringify(user));
+    jsonMiddleware(req, res, () => {
+      if (req.url === "/api/users" && req.method === "GET") {
+        getUsersHandler(req, res);
+      } else if (
+        req.url.match(/\/api\/users\/([0-9]+)/) &&
+        req.method === "GET"
+      ) {
+        getUserByIdHandler(req, res);
       } else {
-        res.statusCode = 404;
-        res.write(JSON.stringify({ message: "User Not Found" }));
-        res.end();
+        notFoundHandler(req, res);
       }
-      res.end();
-    } else {
-      res.statusCode = 404;
-      res.write(JSON.stringify({ message: "Route Not Found" }));
-      res.end();
-    }
+    });
   });
 });
 
