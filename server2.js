@@ -1,10 +1,10 @@
 import { createServer } from "http";
-const PORT = process.env.PORT;
+const PORT = 8000;
 
 const users = [
-  { id: 1, name: "Bizhan" },
-  { id: 2, name: "John" },
-  { id: 3, name: "Jane" },
+  { id: 1, name: "John Doe" },
+  { id: 2, name: "Jane Doe" },
+  { id: 3, name: "Jim Doe" },
 ];
 
 // Logger middleware
@@ -25,7 +25,7 @@ const getUsersHandler = (req, res) => {
   res.end();
 };
 
-//  Route handler for GET /api/users/:id
+// Route handler for GET /api/users/:id
 const getUserByIdHandler = (req, res) => {
   const id = req.url.split("/")[3];
   const user = users.find((user) => user.id === parseInt(id));
@@ -34,17 +34,34 @@ const getUserByIdHandler = (req, res) => {
     res.write(JSON.stringify(user));
   } else {
     res.statusCode = 404;
-    res.write(JSON.stringify({ message: "User Not Found" }));
+    res.write(JSON.stringify({ message: "User not found" }));
   }
   res.end();
 };
 
-// Not Found Handler
+// Route handler for POST /api/users
+const createUserHandler = (req, res) => {
+  let body = "";
+  // Listen for data
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
+  req.on("end", () => {
+    const newUser = JSON.parse(body);
+    users.push(newUser);
+    res.statusCode = 201;
+    res.write(JSON.stringify(newUser));
+    res.end();
+  });
+};
+
+// Not found handler
 const notFoundHandler = (req, res) => {
   res.statusCode = 404;
-  res.write(JSON.stringify({ message: "User Not Found" }));
+  res.write(JSON.stringify({ message: "Route not found" }));
   res.end();
 };
+
 const server = createServer((req, res) => {
   logger(req, res, () => {
     jsonMiddleware(req, res, () => {
@@ -55,6 +72,8 @@ const server = createServer((req, res) => {
         req.method === "GET"
       ) {
         getUserByIdHandler(req, res);
+      } else if (req.url === "/api/users" && req.method === "POST") {
+        createUserHandler(req, res);
       } else {
         notFoundHandler(req, res);
       }
@@ -63,5 +82,5 @@ const server = createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server runing on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
