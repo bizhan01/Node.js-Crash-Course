@@ -13,6 +13,18 @@ const logger = (req, res, next) => {
   next();
 };
 
+// JSON middleware
+const jsonMiddleware = (req, res, next) => {
+  res.setHeader("Content-Type", "application/json");
+  next();
+};
+
+// Route handler for GET /api/users
+const getUsersHandler = (req, res) => {
+  res.write(JSON.stringify(users));
+  res.end();
+};
+
 const server = createServer((req, res) => {
   logger(req, res, () => {
     if (req.url === "/api/users" && req.method === "GET") {
@@ -31,6 +43,7 @@ const server = createServer((req, res) => {
       } else {
         res.statusCode = 404;
         res.write(JSON.stringify({ message: "User Not Found" }));
+        res.end();
       }
       res.end();
     } else {
