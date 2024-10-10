@@ -10,3 +10,6 @@ console.log(path.dirname(filePath));
 
 // extname()
 console.log(path.extname(filePath));
+
+// parse()
+console.log(path.parse(filePath));
