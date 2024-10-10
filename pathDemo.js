@@ -7,3 +7,6 @@ console.log(path.basename(filePath));
 
 // dirname()
 console.log(path.dirname(filePath));
+
+// extname()
+console.log(path.extname(filePath));
